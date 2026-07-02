@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tính Lương</title>
+
+    <link rel="stylesheet" href="style.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <!-- Background -->
+    <div class="bg">
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+
+    <div class="container">
+      <header class="header glass">
+        <h1>💰 TÍNH LƯƠNG NHÂN VIÊN</h1>
+        <p>Tính lương tự động theo lịch làm việc</p>
+      </header>
+
+      <div class="grid">
+        <!-- LEFT -->
+        <section class="glass panel">
+          <h2>⚙️ Thông tin lương</h2>
+
+          <div class="form-grid">
+            <div class="input-box">
+              <label>Tháng</label>
+              <select id="month">
+                <option value="1">Tháng 1</option>
+                <option value="2">Tháng 2</option>
+                <option value="3">Tháng 3</option>
+                <option value="4">Tháng 4</option>
+                <option value="5">Tháng 5</option>
+                <option value="6">Tháng 6</option>
+                <option value="7">Tháng 7</option>
+                <option value="8">Tháng 8</option>
+                <option value="9">Tháng 9</option>
+                <option value="10">Tháng 10</option>
+                <option value="11">Tháng 11</option>
+                <option value="12">Tháng 12</option>
+              </select>
+            </div>
+
+            <div class="input-box">
+              <label>Lương cơ bản</label>
+              <input
+                id="salary"
+                type="number"
+                placeholder="6000000"
+                step="100000"
+                max="10000000"
+                min="0"
+              />
+            </div>
+
+            <div class="input-box">
+              <label>Phụ cấp / ngày</label>
+              <input
+                id="allowance"
+                type="number"
+                placeholder="30000"
+                step="5000"
+                max="100000"
+                min="0"
+              />
+            </div>
+
+            <div class="input-box">
+              <label>Thưởng chuyên cần</label>
+              <input
+                id="fullBonus"
+                type="number"
+                placeholder="500000"
+                step="100000"
+                max="1000000"
+                min="0"
+              />
+            </div>
+
+            <div class="input-box">
+              <label>Thưởng khác</label>
+              <input id="otherBonus" type="number" placeholder="0" />
+            </div>
+
+            <div class="input-box">
+              <label>BHXH</label>
+              <input
+                id="insurance"
+                type="number"
+                placeholder="557000"
+                max="1000000"
+                min="0"
+              />
+            </div>
+
+            <div class="input-box">
+              <label>Chi phí khác</label>
+              <input id="otherCost" type="number" placeholder="0" />
+            </div>
+
+            <div class="input-box">
+              <label>Phạt đi trễ mỗi 30 phút</label>
+              <input
+                id="lateFine"
+                type="number"
+                placeholder="30000"
+                step="5000"
+                max="100000"
+                min="0"
+              />
+            </div>
+          </div>
+
+          <div class="button-group">
+            <button id="btnCalc">🧮 Tính Lương</button>
+
+            <button id="btnClear" class="secondary">🗑 Xóa</button>
+          </div>
+        </section>
+
+        <!-- RIGHT -->
+        <section class="glass panel">
+          <div class="title-row">
+            <h2>📝 Lịch làm việc</h2>
+
+            <button id="btnExample">Ví dụ</button>
+          </div>
+
+          <textarea
+            id="workInput"
+            spellcheck="false"
+            placeholder="T2 1/6 7h25-18h00
+T3 2/6 7h30-16h30
+T4 3/6 7h20-21h00
+T5 4/6 7h40-18h15"
+          ></textarea>
+
+          <div class="note">
+            <h3>Quy tắc nhập</h3>
+
+            <ul>
+              <li>Không cần ghi đúng thứ.</li>
+
+              <li>
+                Chỉ cần có:
+                <strong>ngày/tháng</strong>
+                và
+                <strong>giờ vào-giờ ra</strong>
+              </li>
+
+              <li>Ví dụ hợp lệ:</li>
+            </ul>
+
+            <pre>
+T2 1/6 7h30-16h30
+Hai 2/6 7h20-18h00
+3/6 7h30-21h00
+abc xyz 4/6 7h25-17h15
+</pre
+            >
+          </div>
+        </section>
+      </div>
+
+      <!-- RESULT -->
+
+      <section class="glass panel">
+        <div class="result-title">
+          <h2>📊 KẾT QUẢ</h2>
+
+          <button id="btnPrint">🖨 In bảng</button>
+        </div>
+
+        <div class="summary">
+          <div class="card">
+            <span>Tổng công</span>
+            <b id="sumWork">0</b>
+          </div>
+
+          <div class="card">
+            <span>OT</span>
+            <b id="sumOT">0h</b>
+          </div>
+
+          <div class="card">
+            <span>Đi trễ</span>
+            <b id="sumLate">0 phút</b>
+          </div>
+
+          <div class="card">
+            <span>Lương nhận</span>
+            <b id="sumSalary">0đ</b>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table id="detailTable">
+            <thead>
+              <tr>
+                <th>Ngày</th>
+
+                <th>Giờ làm</th>
+
+                <th>Công</th>
+
+                <th>Đi trễ</th>
+
+                <th>OT</th>
+
+                <th>Tiền OT</th>
+
+                <th>Phụ cấp</th>
+
+                <th>Lương ngày</th>
+
+                <th>Tổng</th>
+              </tr>
+            </thead>
+
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <br />
+
+        <div class="table-wrap">
+          <table id="salaryTable">
+            <thead>
+              <tr>
+                <th>Hạng mục</th>
+                <th>Giá trị</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td>Tổng công</td>
+                <td id="tbWork"></td>
+              </tr>
+
+              <tr>
+                <td>Tổng OT</td>
+                <td id="tbOT"></td>
+              </tr>
+
+              <tr>
+                <td>Tổng phút đi trễ</td>
+                <td id="tbLate"></td>
+              </tr>
+
+              <tr>
+                <td>Tiền phạt</td>
+                <td id="tbFine"></td>
+              </tr>
+
+              <tr>
+                <td>Tiền OT</td>
+                <td id="tbMoneyOT"></td>
+              </tr>
+
+              <tr>
+                <td>Tiền phụ cấp</td>
+                <td id="tbAllowance"></td>
+              </tr>
+
+              <tr>
+                <td>Thưởng chuyên cần</td>
+                <td id="tbFullBonus"></td>
+              </tr>
+
+              <tr>
+                <td>Thưởng khác</td>
+                <td id="tbOtherBonus"></td>
+              </tr>
+
+              <tr>
+                <td>BHXH</td>
+                <td id="tbInsurance"></td>
+              </tr>
+
+              <tr>
+                <td>Chi phí khác</td>
+                <td id="tbOtherCost"></td>
+              </tr>
+
+              <tr class="total">
+                <td><b>LƯƠNG THỰC NHẬN</b></td>
+
+                <td id="tbTotal"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <!-- Loading -->
+
+    <div id="loading" class="loading hidden">
+      <div class="loader"></div>
+
+      <p>Đang tính lương...</p>
+    </div>
+
+    <!-- Toast -->
+
+    <div id="toast"></div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
