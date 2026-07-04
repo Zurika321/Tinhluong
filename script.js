@@ -731,6 +731,26 @@ function buildDailyResult(item, config) {
     TÍNH TOÀN BỘ LƯƠNG
 -----------------------------------*/
 
+function isPaidSunday(day, month, data) {
+  // Chủ nhật thì mới xét
+  if (!isSunday(day, month)) return false;
+
+  // Tìm ngày làm gần nhất trước CN
+  let prev = day - 1;
+  while (prev >= 1 && isSunday(prev, month)) prev--;
+
+  // Tìm ngày làm gần nhất sau CN
+  let next = day + 1;
+  const last = daysInMonth(month);
+  while (next <= last && isSunday(next, month)) next++;
+
+  const hasPrev = data.some(d => d.day === prev);
+  const hasNext = data.some(d => d.day === next);
+
+  // Có làm cả trước hoặc sau thì tính lương CN
+  return hasPrev || hasNext;
+}
+
 function calculateSalary(data, config) {
   let details = [];
 
@@ -742,6 +762,8 @@ function calculateSalary(data, config) {
   let totalAllowance = 0;
   let totalDailySalary = 0;
 
+  const workedDays = data.length;
+  const allowPhep = workedDays >= 20;
   let usePhep = false;
   let nghiKhongPhep = false;
 
@@ -757,18 +779,20 @@ function calculateSalary(data, config) {
         item = {
           day,
           month: config.month,
-          start: 7 * 60 + 30,
-          end: 7 * 60 + 30,
-          note: "Chủ nhật nghỉ",
+          start: 450,
+          end: 450,
+          note: isPaidSunday(day, config.month, data)
+                ? "Chủ nhật nghỉ"
+                : "Nghỉ"
         };
-      } else if (!usePhep) {
+      } else if (!usePhep && allowPhep) {
         usePhep = true;
 
         item = {
           day,
           month: config.month,
-          start: 7 * 60 + 30,
-          end: 16 * 60 + 30,
+          start: 450,
+          end: 990,
           note: "Nghỉ phép",
         };
       } else {
@@ -777,8 +801,8 @@ function calculateSalary(data, config) {
         item = {
           day,
           month: config.month,
-          start: 7 * 60 + 30,
-          end: 7 * 60 + 30,
+          start: 450,
+          end: 450,
           note: "Nghỉ",
         };
       }
@@ -845,42 +869,53 @@ function renderDetailTable(details) {
   for (let d of details) {
     let tr = document.createElement("tr");
 
+    let timeHtml = "";
+
+    if (d.note === "Nghỉ") {
+      timeHtml = `<span class="error">Nghỉ</span>`;
+    } else if (
+      d.note === "Nghỉ phép" ||
+      d.note === "Chủ nhật nghỉ"
+    ) {
+      timeHtml = `<span class="warning">${d.note}</span>`;
+    } else if (d.isSunday) {
+      timeHtml = `
+        <span class="ok">
+          ${minuteToString(d.start)} - ${minuteToString(d.end)}
+        </span>
+      `;
+    } else {
+      timeHtml = `
+        ${minuteToString(d.start)}
+        -
+        ${minuteToString(d.end)}
+      `;
+    }
+
     tr.innerHTML = `
+      <td>${d.day}/${DOM.month.value}</td>
 
-            <td>${d.day}/${DOM.month.value}</td>
+      <td>${timeHtml}</td>
 
-            <td>
-                ${minuteToString(d.start)}
-                -
-                ${minuteToString(d.end)}
-            </td>
+      <td>${d.workDay}</td>
 
-            <td>${d.workDay}</td>
+      <td class="${d.lateMinutes > 0 ? "error" : "warning"}">
+        ${d.lateMinutes}
+      </td>
 
-            <td class="${d.lateMinutes > 0 ? "error" : "warning"}">
-                ${d.lateMinutes}
-            </td>
+      <td class="ot">${(d.otMinutes / 60).toFixed(2)}</td>
 
-            <td class="ot">${(d.otMinutes / 60).toFixed(2)}</td>
+      <td class="ok">${formatMoney(d.otMoney)}</td>
 
-            <td class="ok">
-                ${formatMoney(d.otMoney)}
-            </td>
+      <td>${formatMoney(d.allowance)}</td>
 
-            <td>
-                ${formatMoney(d.allowance)}
-            </td>
+      <td>${formatMoney(d.dailySalary)}</td>
 
-            <td>
-                ${formatMoney(d.dailySalary)}
-            </td>
+      <td class="ok">
+        ${formatMoney(d.dailySalary + d.otMoney + d.allowance)}
+      </td>
+    `;
 
-            <td class="ok">
-              ${formatMoney(d.dailySalary + d.otMoney + d.allowance)}
-            </td>
-
-        `;
-    // ${d.autoFill ? "AUTO" : d.note == "" ? "Bình thường" : d.note}
     DOM.detailTable.appendChild(tr);
   }
 }
