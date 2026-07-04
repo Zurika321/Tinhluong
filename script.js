@@ -3,132 +3,20 @@
 ==================================================*/
 
 const CONFIG = {
-  WORK_START: 450, //07:30
-  WORK_END: 16 * 60 + 30, //16:30
+  WORK_START: 450,
+  WORK_END: 16 * 60 + 30,
 
   OT_PER_HOUR: 30000,
 
   LATE_FINE_STEP: 30,
-  //   LATE_FINE_MONEY: 30000,
 
   STANDARD_WORK_DAYS: 30,
 
   SUNDAY_END: 14 * 60,
 
-  DEFAULT_START: "7h30",
-  DEFAULT_END: "16h30",
+  DEFAULT_START: "07:30",
+  DEFAULT_END: "16:30",
 };
-
-DOM.textMode = document.getElementById("textMode");
-
-DOM.calendarMode = document.getElementById("calendarMode");
-
-DOM.calendarInput = document.getElementById("calendarInput");
-
-function buildCalendarInput() {
-
-    DOM.calendarInput.innerHTML = "";
-
-    const month = Number(DOM.month.value);
-
-    const totalDays = daysInMonth(month);
-
-    for (let day = 1; day <= totalDays; day++) {
-
-        const row = document.createElement("div");
-
-        row.className = "day-row";
-
-        row.innerHTML = `
-            <label>
-                <input type="checkbox" class="work-check">
-                ${String(day).padStart(2, "0")}/${month}
-            </label>
-
-            <input type="time"
-                   class="start"
-                   value="07:30"
-                   disabled>
-
-            <input type="time"
-                   class="end"
-                   value="07:30"
-                   disabled>
-        `;
-
-        const check = row.querySelector(".work-check");
-        const start = row.querySelector(".start");
-        const end = row.querySelector(".end");
-
-        check.addEventListener("change", () => {
-
-            if (check.checked) {
-
-                start.disabled = false;
-                end.disabled = false;
-
-                if (!start.dataset.old) {
-
-                    start.value = "07:30";
-                    end.value = "16:30";
-
-                } else {
-
-                    start.value = start.dataset.old;
-                    end.value = end.dataset.old;
-
-                }
-
-            } else {
-
-                start.dataset.old = start.value;
-                end.dataset.old = end.value;
-
-                start.disabled = true;
-                end.disabled = true;
-
-                start.value = "07:30";
-                end.value = "07:30";
-
-            }
-
-        });
-
-        DOM.calendarInput.appendChild(row);
-
-    }
-
-}
-
-check.dispatchEvent(new Event("change"));
-
-        DOM.calendarInput.appendChild(row);
-
-    }
-
-}
-
-document
-.querySelectorAll("[name=inputMode]")
-.forEach(r=>{
-
-    r.onchange=()=>{
-
-        let calendar=r.value=="calendar";
-
-        DOM.textMode.hidden=calendar;
-
-        DOM.calendarMode.hidden=!calendar;
-
-        if(calendar){
-
-            buildCalendarInput();
-
-        }
-
-    };
-
-});
 
 /*==================================================
     DOM
@@ -140,81 +28,147 @@ const DOM = {
   month: $("month"),
 
   salary: $("salary"),
-
   allowance: $("allowance"),
-
   fullBonus: $("fullBonus"),
-
   otherBonus: $("otherBonus"),
-
   lateFine: $("lateFine"),
-
   otherCost: $("otherCost"),
-
   insurance: $("insurance"),
 
   workInput: $("workInput"),
 
   btnCalc: $("btnCalc"),
-
   btnClear: $("btnClear"),
-
   btnExample: $("btnExample"),
-
   btnPrint: $("btnPrint"),
 
   loading: $("loading"),
-
   toast: $("toast"),
 
   detailTable: $("detailTable").querySelector("tbody"),
-
   salaryTable: $("salaryTable"),
+
+  textMode: $("textMode"),
+  calendarMode: $("calendarMode"),
+  calendarInput: $("calendarInput"),
 };
 
+/*==================================================
+    CALENDAR INPUT
+==================================================*/
 
+function buildCalendarInput() {
+  DOM.calendarInput.innerHTML = "";
 
-DOM.month.onchange=()=>{
+  const month = Number(DOM.month.value);
+  const totalDays = daysInMonth(month);
 
-    buildCalendarInput();
+  for (let day = 1; day <= totalDays; day++) {
+    const row = document.createElement("div");
 
-};
+    row.className = "day-row";
 
-function getCalendarData(){
+    row.innerHTML = `
+        <label>
+            <input type="checkbox" class="work-check">
+            ${String(day).padStart(2, "0")}/${month}
+        </label>
 
-    let result=[];
+        <input
+            type="time"
+            class="start"
+            value="07:30"
+            disabled>
 
-    document
-    .querySelectorAll(".day-row")
-    .forEach((row,index)=>{
+        <input
+            type="time"
+            class="end"
+            value="07:30"
+            disabled>
+    `;
 
-        let check=row.querySelector(".work-check");
+    const check = row.querySelector(".work-check");
+    const start = row.querySelector(".start");
+    const end = row.querySelector(".end");
 
-        if(!check.checked)
-            return;
+    check.addEventListener("change", () => {
+      if (check.checked) {
+        start.disabled = false;
+        end.disabled = false;
 
-        let start=row.querySelector(".start").value;
+        start.value = start.dataset.old || CONFIG.DEFAULT_START;
+        end.value = end.dataset.old || CONFIG.DEFAULT_END;
+      } else {
+        start.dataset.old = start.value;
+        end.dataset.old = end.value;
 
-        let end=row.querySelector(".end").value;
+        start.disabled = true;
+        end.disabled = true;
 
-        result.push({
-
-            day:index+1,
-
-            month:inputNumber(DOM.month),
-
-            start:stringToMinute(start),
-
-            end:stringToMinute(end),
-
-            text:""
-
-        });
-
+        start.value = CONFIG.DEFAULT_START;
+        end.value = CONFIG.DEFAULT_START;
+      }
     });
 
-    return result;
+    check.dispatchEvent(new Event("change"));
 
+    DOM.calendarInput.appendChild(row);
+  }
+}
+
+/*==================================================
+    CHUYỂN CHẾ ĐỘ NHẬP
+==================================================*/
+
+document.querySelectorAll("[name=inputMode]").forEach((radio) => {
+  radio.addEventListener("change", () => {
+    const calendar = radio.value === "calendar";
+
+    DOM.textMode.hidden = calendar;
+    DOM.calendarMode.hidden = !calendar;
+
+    if (calendar) {
+      buildCalendarInput();
+    }
+  });
+});
+
+/*==================================================
+    THÁNG THAY ĐỔI
+==================================================*/
+
+DOM.month.addEventListener("change", () => {
+  if (
+    document.querySelector(
+      'input[name="inputMode"][value="calendar"]'
+    ).checked
+  ) {
+    buildCalendarInput();
+  }
+});
+
+/*==================================================
+    LẤY DỮ LIỆU CALENDAR
+==================================================*/
+
+function getCalendarData() {
+  const result = [];
+
+  document.querySelectorAll(".day-row").forEach((row, index) => {
+    const check = row.querySelector(".work-check");
+
+    if (!check.checked) return;
+
+    result.push({
+      day: index + 1,
+      month: Number(DOM.month.value),
+      start: stringToMinute(row.querySelector(".start").value),
+      end: stringToMinute(row.querySelector(".end").value),
+      text: "",
+    });
+  });
+
+  return result;
 }
 
 /*==================================================
