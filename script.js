@@ -19,6 +19,34 @@ const CONFIG = {
   DEFAULT_END: "16h30",
 };
 
+DOM.textMode = document.getElementById("textMode");
+
+DOM.calendarMode = document.getElementById("calendarMode");
+
+DOM.calendarInput = document.getElementById("calendarInput");
+
+document
+.querySelectorAll("[name=inputMode]")
+.forEach(r=>{
+
+    r.onchange=()=>{
+
+        let calendar=r.value=="calendar";
+
+        DOM.textMode.hidden=calendar;
+
+        DOM.calendarMode.hidden=!calendar;
+
+        if(calendar){
+
+            buildCalendarInput();
+
+        }
+
+    };
+
+});
+
 /*==================================================
     DOM
 ==================================================*/
@@ -60,6 +88,123 @@ const DOM = {
 
   salaryTable: $("salaryTable"),
 };
+
+function buildCalendarInput(){
+
+    DOM.calendarInput.innerHTML="";
+
+    let last=daysInMonth(inputNumber(DOM.month));
+
+    for(let day=1;day<=last;day++){
+
+        let row=document.createElement("div");
+
+        row.className="day-row";
+
+        row.innerHTML=`
+
+<label>
+
+<input class="work-check" type="checkbox">
+
+${String(day).padStart(2,"0")}/${DOM.month.value}
+
+</label>
+
+<input class="start" type="time" value="07:30">
+
+<input class="end" type="time" value="16:30">
+
+`;
+
+let check=row.querySelector(".work-check");
+
+let start=row.querySelector(".start");
+
+let end=row.querySelector(".end");
+
+check.onchange=()=>{
+
+    if(check.checked){
+
+        start.disabled=false;
+
+        end.disabled=false;
+
+        if(start.dataset.old)
+            start.value=start.dataset.old;
+
+        if(end.dataset.old)
+            end.value=end.dataset.old;
+
+    }else{
+
+        start.dataset.old=start.value;
+
+        end.dataset.old=end.value;
+
+        start.disabled=true;
+
+        end.disabled=true;
+
+        start.value="07:30";
+
+        end.value="07:30";
+
+    }
+
+};
+
+check.dispatchEvent(new Event("change"));
+
+        DOM.calendarInput.appendChild(row);
+
+    }
+
+}
+
+DOM.month.onchange=()=>{
+
+    buildCalendarInput();
+
+};
+
+function getCalendarData(){
+
+    let result=[];
+
+    document
+    .querySelectorAll(".day-row")
+    .forEach((row,index)=>{
+
+        let check=row.querySelector(".work-check");
+
+        if(!check.checked)
+            return;
+
+        let start=row.querySelector(".start").value;
+
+        let end=row.querySelector(".end").value;
+
+        result.push({
+
+            day:index+1,
+
+            month:inputNumber(DOM.month),
+
+            start:stringToMinute(start),
+
+            end:stringToMinute(end),
+
+            text:""
+
+        });
+
+    });
+
+    return result;
+
+}
 
 /*==================================================
     REGEX
@@ -455,7 +600,12 @@ function validateInput() {
   }
 
   // 2. parse input an toàn
-  let data = parseInput(DOM.workInput.value || "");
+ let mode=document.querySelector("[name=inputMode]:checked").value;
+
+let data=
+mode=="text"
+?parseInput(DOM.workInput.value)
+:getCalendarData();
 
   // nếu không có dữ liệu → không crash
   if (data.length === 0) {
