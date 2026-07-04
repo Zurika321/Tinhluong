@@ -768,7 +768,7 @@ function calcBaseDailySalary(config) {
 
 function calcNormalSalary(baseDaily, item, isCN) {
   if (item.start <= 450) {
-    const timework = (item.end - item.start);
+    let timework = (item.end - item.start);
     timework= timework < 0 ? 0 : timework/60
     return (baseDaily / (isCN ? 6.5 : 9)) * timework;
   }
@@ -789,7 +789,10 @@ function buildDailyResult(item, config) {
   let dailySalary;
 
   if (isSundayDayFlag) {
-    dailySalary = item.note == "Chủ nhật nghỉ" ? 0 : calcNormalSalary(salaryBase,item,true); + salaryBase;
+    dailySalary =
+  item.note == "Chủ nhật nghỉ"
+    ? salaryBase
+    : calcNormalSalary(salaryBase, item, true) + salaryBase;
   } else if (isHolidayFlag) {
     dailySalary = salaryBase * 2;
   } else {
