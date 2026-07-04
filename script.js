@@ -787,11 +787,11 @@ function buildDailyResult(item, config) {
   let dailySalary;
 
   if (isSundayDayFlag) {
-    dailySalary = (item.note == "Chủ nhật nghỉ" ? 1 : 2) * calcNormalSalary(baseDaily,item,true);
+    dailySalary = (item.note == "Chủ nhật nghỉ" ? 1 : 2) * calcNormalSalary(salaryBase,item,true);
   } else if (isHolidayFlag) {
     dailySalary = salaryBase * 2;
   } else {
-    dailySalary = item.note == "Nghỉ" ? 0 : calcNormalSalary(salaryBase,item);
+    dailySalary = item.note == "Nghỉ" ? 0 : calcNormalSalary(salaryBase,item,false);
   }
   
   let late = calcLateMinutes(item.start);
