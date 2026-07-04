@@ -89,71 +89,80 @@ const DOM = {
   salaryTable: $("salaryTable"),
 };
 
-function buildCalendarInput(){
+function buildCalendarInput() {
 
-    DOM.calendarInput.innerHTML="";
+    DOM.calendarInput.innerHTML = "";
 
-    let last=daysInMonth(inputNumber(DOM.month));
+    const month = Number(DOM.month.value);
 
-    for(let day=1;day<=last;day++){
+    const totalDays = daysInMonth(month);
 
-        let row=document.createElement("div");
+    for (let day = 1; day <= totalDays; day++) {
 
-        row.className="day-row";
+        const row = document.createElement("div");
 
-        row.innerHTML=`
+        row.className = "day-row";
 
-<label>
+        row.innerHTML = `
+            <label>
+                <input type="checkbox" class="work-check">
+                ${String(day).padStart(2, "0")}/${month}
+            </label>
 
-<input class="work-check" type="checkbox">
+            <input type="time"
+                   class="start"
+                   value="07:30"
+                   disabled>
 
-${String(day).padStart(2,"0")}/${DOM.month.value}
+            <input type="time"
+                   class="end"
+                   value="07:30"
+                   disabled>
+        `;
 
-</label>
+        const check = row.querySelector(".work-check");
+        const start = row.querySelector(".start");
+        const end = row.querySelector(".end");
 
-<input class="start" type="time" value="07:30">
+        check.addEventListener("change", () => {
 
-<input class="end" type="time" value="16:30">
+            if (check.checked) {
 
-`;
+                start.disabled = false;
+                end.disabled = false;
 
-let check=row.querySelector(".work-check");
+                if (!start.dataset.old) {
 
-let start=row.querySelector(".start");
+                    start.value = "07:30";
+                    end.value = "16:30";
 
-let end=row.querySelector(".end");
+                } else {
 
-check.onchange=()=>{
+                    start.value = start.dataset.old;
+                    end.value = end.dataset.old;
 
-    if(check.checked){
+                }
 
-        start.disabled=false;
+            } else {
 
-        end.disabled=false;
+                start.dataset.old = start.value;
+                end.dataset.old = end.value;
 
-        if(start.dataset.old)
-            start.value=start.dataset.old;
+                start.disabled = true;
+                end.disabled = true;
 
-        if(end.dataset.old)
-            end.value=end.dataset.old;
+                start.value = "07:30";
+                end.value = "07:30";
 
-    }else{
+            }
 
-        start.dataset.old=start.value;
+        });
 
-        end.dataset.old=end.value;
-
-        start.disabled=true;
-
-        end.disabled=true;
-
-        start.value="07:30";
-
-        end.value="07:30";
+        DOM.calendarInput.appendChild(row);
 
     }
 
-};
+}
 
 check.dispatchEvent(new Event("change"));
 
