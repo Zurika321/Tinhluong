@@ -151,6 +151,11 @@ DOM.month.addEventListener("change", () => {
     LẤY DỮ LIỆU CALENDAR
 ==================================================*/
 
+function stringToMinute(time) {
+    const [h, m] = time.split(":").map(Number);
+    return h * 60 + m;
+}
+
 function getCalendarData() {
   const result = [];
 
