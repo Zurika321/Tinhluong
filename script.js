@@ -766,11 +766,12 @@ function calcBaseDailySalary(config) {
     LƯƠNG NGÀY THƯỜNG
 -----------------------------------*/
 
-function calcNormalSalary(baseDaily,item,isCN) 
-  if (item.start == 450){
-    let timework = (item.end - item.start) / 60;
-    return baseDaily / (isCN ? 6,5 : 9) * timework;
+function calcNormalSalary(baseDaily, item, isCN) {
+  if (item.start == 450) {
+    const timework = (item.end - item.start) / 60;
+    return (baseDaily / (isCN ? 6.5 : 9)) * timework;
   }
+
   return baseDaily;
 }
 
