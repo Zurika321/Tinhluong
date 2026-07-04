@@ -138,20 +138,33 @@
           <div class="title-row">
             <h2>📝 Lịch làm việc</h2>
 
+            <div class="input-mode">
+  <label>
+    <input type="radio" name="inputMode" value="text" checked />
+    Nhập văn bản
+  </label>
+
+  <label>
+    <input type="radio" name="inputMode" value="calendar" />
+    Nhập theo ngày
+  </label>
+</div>
+
             <button id="btnExample">Ví dụ</button>
           </div>
 
-          <textarea
-            id="workInput"
-            spellcheck="false"
-            placeholder="T2 1/6 7h25-18h00
+          <div id="textMode">
+             <textarea
+               id="workInput"
+               spellcheck="false"
+               placeholder="T2 1/6 7h25-18h00
 T3 2/6 7h30-16h30
 T4 3/6 7h20-21h00
 T5 4/6 7h40-18h15"
-          ></textarea>
+             ></textarea>
 
-          <div class="note">
-            <h3>Quy tắc nhập</h3>
+             <div class="note">
+               <h3>Quy tắc nhập</h3>
 
             <ul>
               <li>Không cần ghi đúng thứ.</li>
@@ -174,6 +187,12 @@ abc xyz 4/6 7h25-17h15
 </pre
             >
           </div>
+          </div>
+          <div id="calendarMode" hidden>
+
+    <div id="calendarInput"></div>
+
+</div>
         </section>
       </div>
 
