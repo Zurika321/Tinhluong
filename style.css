@@ -24,6 +24,61 @@ body {
 BACKGROUND
 ========================== */
 
+.input-mode{
+    display:flex;
+    gap:18px;
+    margin-bottom:15px;
+}
+
+#calendarInput{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    max-height:650px;
+    overflow:auto;
+}
+
+.day-row{
+
+    display:grid;
+
+    grid-template-columns:
+        120px
+        110px
+        110px;
+
+    gap:12px;
+
+    align-items:center;
+
+    padding:10px;
+
+    border-radius:12px;
+
+    background:rgba(255,255,255,.05);
+
+}
+
+.day-row:hover{
+
+    transform:translateY(-2px);
+
+}
+
+.day-row input[type=time]{
+
+    width:100%;
+
+}
+
+.day-row input:disabled{
+
+    opacity:.45;
+
+    cursor:not-allowed;
+
+}
+
 .bg {
   position: fixed;
   inset: 0;
