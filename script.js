@@ -654,6 +654,10 @@ function printData(data) {
 function calcLateMinutes(start) {
   // nếu đến trước hoặc đúng 07:30 thì không tính trễ
   if (start <= CONFIG.WORK_START) return 0;
+  
+  if (start >= 700){
+    return start <= 720 ? 0 : start - 720;
+  }
 
   return start - CONFIG.WORK_START;
 }
@@ -762,7 +766,11 @@ function calcBaseDailySalary(config) {
     LƯƠNG NGÀY THƯỜNG
 -----------------------------------*/
 
-function calcNormalSalary(baseDaily) {
+function calcNormalSalary(baseDaily,item,isCN) 
+  if (item.start == 450){
+    let timework = (item.end - item.start) / 60;
+    return baseDaily / (isCN ? 6,5 : 9) * timework;
+  }
   return baseDaily;
 }
 
@@ -779,13 +787,13 @@ function buildDailyResult(item, config) {
   let dailySalary;
 
   if (isSundayDayFlag) {
-    dailySalary = (item.note == "Chủ nhật nghỉ" ? 1 : 2) * salaryBase;
+    dailySalary = (item.note == "Chủ nhật nghỉ" ? 1 : 2) * calcNormalSalary(baseDaily,item,true);
   } else if (isHolidayFlag) {
     dailySalary = salaryBase * 2;
   } else {
-    dailySalary = item.note == "Nghỉ" ? 0 : calcNormalSalary(salaryBase);
+    dailySalary = item.note == "Nghỉ" ? 0 : calcNormalSalary(salaryBase,item);
   }
-
+  
   let late = calcLateMinutes(item.start);
 
   let latePenalty = calcLatePenalty(late, config.lateFine);
