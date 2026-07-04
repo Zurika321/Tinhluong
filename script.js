@@ -25,70 +25,6 @@ DOM.calendarMode = document.getElementById("calendarMode");
 
 DOM.calendarInput = document.getElementById("calendarInput");
 
-document
-.querySelectorAll("[name=inputMode]")
-.forEach(r=>{
-
-    r.onchange=()=>{
-
-        let calendar=r.value=="calendar";
-
-        DOM.textMode.hidden=calendar;
-
-        DOM.calendarMode.hidden=!calendar;
-
-        if(calendar){
-
-            buildCalendarInput();
-
-        }
-
-    };
-
-});
-
-/*==================================================
-    DOM
-==================================================*/
-
-const $ = (id) => document.getElementById(id);
-
-const DOM = {
-  month: $("month"),
-
-  salary: $("salary"),
-
-  allowance: $("allowance"),
-
-  fullBonus: $("fullBonus"),
-
-  otherBonus: $("otherBonus"),
-
-  lateFine: $("lateFine"),
-
-  otherCost: $("otherCost"),
-
-  insurance: $("insurance"),
-
-  workInput: $("workInput"),
-
-  btnCalc: $("btnCalc"),
-
-  btnClear: $("btnClear"),
-
-  btnExample: $("btnExample"),
-
-  btnPrint: $("btnPrint"),
-
-  loading: $("loading"),
-
-  toast: $("toast"),
-
-  detailTable: $("detailTable").querySelector("tbody"),
-
-  salaryTable: $("salaryTable"),
-};
-
 function buildCalendarInput() {
 
     DOM.calendarInput.innerHTML = "";
@@ -171,6 +107,72 @@ check.dispatchEvent(new Event("change"));
     }
 
 }
+
+document
+.querySelectorAll("[name=inputMode]")
+.forEach(r=>{
+
+    r.onchange=()=>{
+
+        let calendar=r.value=="calendar";
+
+        DOM.textMode.hidden=calendar;
+
+        DOM.calendarMode.hidden=!calendar;
+
+        if(calendar){
+
+            buildCalendarInput();
+
+        }
+
+    };
+
+});
+
+/*==================================================
+    DOM
+==================================================*/
+
+const $ = (id) => document.getElementById(id);
+
+const DOM = {
+  month: $("month"),
+
+  salary: $("salary"),
+
+  allowance: $("allowance"),
+
+  fullBonus: $("fullBonus"),
+
+  otherBonus: $("otherBonus"),
+
+  lateFine: $("lateFine"),
+
+  otherCost: $("otherCost"),
+
+  insurance: $("insurance"),
+
+  workInput: $("workInput"),
+
+  btnCalc: $("btnCalc"),
+
+  btnClear: $("btnClear"),
+
+  btnExample: $("btnExample"),
+
+  btnPrint: $("btnPrint"),
+
+  loading: $("loading"),
+
+  toast: $("toast"),
+
+  detailTable: $("detailTable").querySelector("tbody"),
+
+  salaryTable: $("salaryTable"),
+};
+
+
 
 DOM.month.onchange=()=>{
 
