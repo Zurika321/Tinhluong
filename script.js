@@ -789,10 +789,10 @@ function buildDailyResult(item, config) {
   let dailySalary;
 
   if (isSundayDayFlag) {
-    dailySalary =
-  item.note == "Chủ nhật nghỉ"
+    dailySalary = item.note == "Nghỉ" ? 0 :
+  (item.note == "Chủ nhật nghỉ"
     ? 0
-    : calcNormalSalary(salaryBase, item, true) + salaryBase;
+    : calcNormalSalary(salaryBase, item, true) + salaryBase);
   } else if (isHolidayFlag) {
     dailySalary = salaryBase * 2;
   } else {
