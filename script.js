@@ -814,7 +814,7 @@ function buildDailyResult(item, config) {
   let otMoney = calcOTMoney(otMinutes);
 
   // phụ cấp
-  let allowance = item.start == item.end ? 0 : calcAllowance(config, true);
+  let allowance = item.note == "Nghỉ" ? 0 : calcAllowance(config, true);
 
   return {
     day: item.day,
@@ -865,23 +865,39 @@ function buildDailyResult(item, config) {
 -----------------------------------*/
 
 function isPaidSunday(day, month, data) {
-  // Chủ nhật thì mới xét
-  if (!isSunday(day, month)) return false;
+    if (!isSunday(day, month)) return false;
 
-  // Tìm ngày làm gần nhất trước CN
-  let prev = day - 1;
-  while (prev >= 1 && isSunday(prev, month)) prev--;
+    const workDays = new Set(data.map(e => e.day));
 
-  // Tìm ngày làm gần nhất sau CN
-  let next = day + 1;
-  const last = daysInMonth(month);
-  while (next <= last && isSunday(next, month)) next++;
+    // kiểm tra liên tục về bên trái
+    let left = false;
+    for (let d = day - 1; d >= 1; d--) {
+        if (isSunday(d, month)) continue;
 
-  const hasPrev = data.some(d => d.day === prev);
-  const hasNext = data.some(d => d.day === next);
+        if (workDays.has(d)) {
+            left = true;
+            break;
+        }
 
-  // Có làm cả trước hoặc sau thì tính lương CN
-  return hasPrev || hasNext;
+        break;
+    }
+
+    // kiểm tra liên tục về bên phải
+    let right = false;
+    const last = daysInMonth(month);
+
+    for (let d = day + 1; d <= last; d++) {
+        if (isSunday(d, month)) continue;
+
+        if (workDays.has(d)) {
+            right = true;
+            break;
+        }
+
+        break;
+    }
+
+    return left || right;
 }
 
 function calculateSalary(data, config) {
@@ -939,6 +955,8 @@ function calculateSalary(data, config) {
           note: "Nghỉ",
         };
       }
+    }else{
+      item.note = (item.end - item.start <= 0) ? "Nghỉ" : "Bình thường";
     }
 
     let d = buildDailyResult(item, config);
