@@ -865,39 +865,23 @@ function buildDailyResult(item, config) {
 -----------------------------------*/
 
 function isPaidSunday(day, month, data) {
-    if (!isSunday(day, month)) return false;
+  if (!isSunday(day, month)) return false;
 
-    const workDays = new Set(data.map(e => e.day));
+  function worked(d) {
+    return data.some(item =>
+      item.day === d &&
+      item.end > item.start
+    );
+  }
 
-    // kiểm tra liên tục về bên trái
-    let left = false;
-    for (let d = day - 1; d >= 1; d--) {
-        if (isSunday(d, month)) continue;
+  let prev = day - 1;
+  while (prev >= 1 && isSunday(prev, month)) prev--;
 
-        if (workDays.has(d)) {
-            left = true;
-            break;
-        }
+  let next = day + 1;
+  const last = daysInMonth(month);
+  while (next <= last && isSunday(next, month)) next++;
 
-        break;
-    }
-
-    // kiểm tra liên tục về bên phải
-    let right = false;
-    const last = daysInMonth(month);
-
-    for (let d = day + 1; d <= last; d++) {
-        if (isSunday(d, month)) continue;
-
-        if (workDays.has(d)) {
-            right = true;
-            break;
-        }
-
-        break;
-    }
-
-    return left || right;
+  return worked(prev) || worked(next);
 }
 
 function calculateSalary(data, config) {
