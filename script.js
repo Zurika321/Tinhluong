@@ -1132,7 +1132,7 @@ function runCalculate() {
 
     saveData();
 
-    toast("Tính lương thành công", "success");
+    toast("Tính lương thành công.", "success");
     return true;
   });
 }
